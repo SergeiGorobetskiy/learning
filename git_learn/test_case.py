@@ -58,4 +58,5 @@
 #    num = int(input('введите число')) #25
 #print(maxs)
 
-# Задача 8
+import os
+help(os)
