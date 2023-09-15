@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'News',
-    'Accounts'
+    'Accounts',
 ]
 
 MIDDLEWARE = [
@@ -53,10 +53,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'News_Portal.urls'
 
+import os
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'News/templates/News')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

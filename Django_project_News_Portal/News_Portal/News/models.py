@@ -2,9 +2,11 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.shortcuts import reverse
 
 
 class Author(models.Model):
+    objects = ()
     author_name = models.CharField(max_length=255)
     author_surname = models.CharField(max_length=255)
     article_topic = models.CharField(max_length=255)
@@ -23,6 +25,9 @@ class Author(models.Model):
 
         self.author_rating = pRat *3 + cRat
         self.save()
+
+    def title_censor(self):
+        censor = '*'
 
 
     # photo = models.ImageField(upload_to='users/%Y/%m/%d', blank=True)
@@ -56,12 +61,12 @@ class Post(models.Model):
     News = 'NW'
     Article = 'AR'
     Category_Choices = (
-    (News, 'Новость'),
-    (Article, 'Статья')
+    (News, 'News post'),
+    (Article, 'Article post')
     )
     dateCreations = models.DateTimeField(auto_now_add=True)
     postCategory = models.ManyToManyField(Category, through='PostCategory')
-    title = models.CharField(max_length=255)
+    article_title = models.CharField(max_length=255)
     text = models.TextField()
     rating = models.SmallIntegerField(default=0)
     def like(self):
@@ -72,17 +77,9 @@ class Post(models.Model):
         self.rating +=1
         self.save()
 
-    def previes(self):
+    def preview(self):
         return '{} ... {}' .format(self.title, str(self.text[0:255] + '...'))
 
-    author_name = models.CharField(max_length=255)
-    author_surname = models.CharField(max_length=255)
-    time_in = models.DateTimeField(auto_now_add=True)
-    article_topic = models.CharField(max_length=255)
-    article_title = models.CharField(max_length=255)
-    text_of_articles = models.CharField(max_length=255)
-    categories_of_articles = models.CharField(max_length=4, choices=CATEGORIES)
-    rating = models.IntegerField()
 
 class PostCategory(models.Model):
     postThrough = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -109,4 +106,16 @@ class Comment(models.Model):
     time_in = models.DateTimeField(auto_now_add=True)
     comment_rating = models.IntegerField()
 
+class New(models.Model):
+    objects = ()
+    article_title = models.CharField(max_length=255)
+    text = models.TextField()
+    date_pub = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(max_length=128, unique=True)
+
+    def get_absolute_url(self):
+        return reverse('detail', kwargs={'slug': self.slug})
+
+    def __str__(self):
+        return '{}'.format(self.article_title)
 

@@ -23,9 +23,13 @@ Applications have been created to implement the site:
 - ### *news*
 ```some comand```
 
-___
-first col|  second col | th col
---- |------------:| :---:
-123 |         234 | 431
+[//]: # (___)
 
-> some text
+[//]: # (first col|  second col | th col)
+
+[//]: # (--- |------------:| :---:)
+
+[//]: # (123 |         234 | 431)
+
+[//]: # ()
+[//]: # (> some text)
