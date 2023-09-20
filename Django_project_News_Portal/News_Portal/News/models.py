@@ -3,6 +3,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.shortcuts import reverse
+from django_filters import FilterSet, DateFilter, widgets
+from django.core.validators import MinValueValidator
 
 
 class Author(models.Model):
@@ -119,3 +121,27 @@ class New(models.Model):
     def __str__(self):
         return '{}'.format(self.article_title)
 
+class PostCategoryChoicesFilter(models.Model):
+    name = models.CharField(max_length=255)
+    category = models.ForeignKey('Category_Choices', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name}'
+
+class PostArticleTitleFilter(models.Model):
+    name = models.CharField(max_length=255)
+    title = models.ForeignKey('article_title', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name}'
+
+class PostDateCreationsFilter(models.Model):
+    dateCreations = models.ForeignKey('dateCreations', on_delete=models.CASCADE)
+    added_after = models.DateTimeField(
+        field_name='added_at',
+        lookup_expr='gt',
+        widget=models.DateTimeInput(
+            format='%Y-%m-%dT%H:%M',
+            attrs={'type': 'datetime-local'}
+        ),
+    )
