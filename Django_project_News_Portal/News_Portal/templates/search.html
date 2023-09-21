@@ -1,0 +1,66 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+   <h1>All posts</h1>
+
+     <form action="" method="get">
+           {{ filterset.form.as_p }}
+           <input type="submit" value="Find" />
+       </form>
+
+   <hr>
+   {% if posts %}
+       <table>
+           <tr>
+               <td>dateCreations<td>
+               <td>postCategory<td>
+               <td>article_title<td>
+               <td>text<td>
+               <td>rating</td>
+           </tr>
+
+           {% for one_post in posts %}
+           <tr>
+               <td>{{ one_post.dateCreations }}</td>
+               <td>{{ one_post.postCategory|truncatechars:20 }}</td>
+               <td>{{ one_post.article_title|truncatechars:20 }}</td>
+               <td>{{ one_post.text|truncatechars:20 }}</td>
+               <td>{{ one_post.rating }}</td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>No posts!</h2>
+   {% endif %}
+
+   {# Add pagination on page #}
+   {# info about prev pages #}
+
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# info about current page #}
+
+   {{ page_obj.number }}
+
+   {# info about next pages #}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+{% endblock content %}
