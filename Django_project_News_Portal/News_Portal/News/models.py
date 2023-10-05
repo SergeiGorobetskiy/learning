@@ -59,6 +59,7 @@ class Category(models.Model):
     categories_of_articles = models.CharField(max_length=4, choices=CATEGORIES, default=news)
     unique = True
 class Post(models.Model):
+    objects = 'rating'
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     News = 'NW'
     Article = 'AR'
@@ -122,3 +123,14 @@ class New(models.Model):
         return '{}'.format(self.article_title)
 
 
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+    )
+    category = models.ForeignKey(
+        to='Category',
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+    )

@@ -5,10 +5,15 @@ from django.urls import reverse_lazy
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
-from .filters import PostFilter
 from .forms import SignUpForm
-from .models import Post
+from News_Portal.News.models import Post
+from News_Portal.News.filters import PostFilter
 
+from django.contrib.auth.decorators import login_required
+from django.db.models import Exists, OuterRef
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
+from News_Portal.News.models import Subscription, Category
 
 class PostsList(ListView):
     model = Post
@@ -34,20 +39,6 @@ class PostDetail(DetailView):
     context_object_name = 'post'
 
 
-class PostCreate(PermissionRequiredMixin, CreateView):
-    permission_required = ('simpleapp.add_post',)
-    form_class = PostForm
-    model = Post
-    template_name = 'post_edit.html'
-
-
-class PostUpdate(PermissionRequiredMixin, UpdateView):
-    permission_required = ('simpleapp.change_post',)
-    form_class = PostForm
-    model = Post
-    template_name = 'post_edit.html'
-
-
 class PostDelete(PermissionRequiredMixin, DeleteView):
     permission_required = ('simpleapp.delete_post',)
     model = Post
@@ -58,4 +49,35 @@ class SignUp(CreateView):
     model = User
     form_class = SignUpForm
     success_url = '/Accounts/login'
-    template_name = 'registration/signup.html'
+    template_name = '/registration/signup.html'
+
+
+@login_required
+@csrf_protect
+def subscriptions(request):
+    if request.method == 'POST':
+        category_id = request.POST.get('category_id')
+        category = Category.objects.get(id=category_id)
+        action = request.POST.get('action')
+
+        if action == 'subscribe':
+            Subscription.objects.create(user=request.user, category=category)
+        elif action == 'unsubscribe':
+            Subscription.objects.filter(
+                user=request.user,
+                category=category,
+            ).delete()
+
+    categories_with_subscriptions = Category.objects.annotate(
+        user_subscribed=Exists(
+            Subscription.objects.filter(
+                user=request.user,
+                category=OuterRef('pk'),
+            )
+        )
+    ).order_by('name')
+    return render(
+        request,
+        'subscriptions.html',
+        {'categories': categories_with_subscriptions},
+    )

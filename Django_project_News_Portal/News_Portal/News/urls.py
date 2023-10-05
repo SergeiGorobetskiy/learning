@@ -14,4 +14,5 @@ urlpatterns = [
          #include('django.contrib.auth.urls')),
          include('allauth.urls')),
     path('accounts/', include('Accounts.urls')),
+    path('subscriptions/', Subscription, name='subscriptions'),
 ]
