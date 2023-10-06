@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+
+{% block content %}
+<table>
+    <thead>
+    <tr>
+        <th>news</th>
+        <th>article/th>
+        <th>status</th>
+
+    </tr>
+    </thead>
+
+    {% for new in news %}
+    <tr>
+        <th>{{ news.id }}</th>
+        <th>{{ news.article }}</th>
+        <th>{{ news.time_in|time:"H:i" }}</th>
+        <th>{% if not news.complete %}
+
+            {% elif news.time_out is None %}
+            <button><a href="{% url 'take_post' post.id %}"> article </a></button>
+            {% else %}
+            {{ post.time_out|time:"H:i" }}
+            {% endif %}
+        </th>
+
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
